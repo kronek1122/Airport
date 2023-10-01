@@ -1,8 +1,7 @@
 import threading
 import time
-import sqlite3
-import psycopg2
 from queue import Queue, Empty, Full
+import psycopg2
 
 
 class ConnectionPool:
@@ -12,7 +11,7 @@ class ConnectionPool:
         self.password = password
         self.host = host
         self.min_connections = 3
-        self.max_connections = 20
+        self.max_connections = 100
         self.connections_queue = Queue(maxsize=self.max_connections)
         self.semaphore = threading.Semaphore()
         self.start_time = time.time()
@@ -32,20 +31,12 @@ class ConnectionPool:
     def create_connection(self):
         with self.semaphore:
             if (self.connections_queue.qsize() + self.active_connections) < self.max_connections:
-                if self.user != 'None' and self.password != 'None' and self.host != 'None':
-                    try:
-                        connection = psycopg2.connect(database = self.database, user = self.user, password = self.password, host =self.host)
-                        self.connections_queue.put(connection)
-                    except Exception as exp:
-                        print("Error creating connection:", exp)
-                        return None
-                else: 
-                    try:
-                        connection = sqlite3.connect(database = self.database)
-                        self.connections_queue.put(connection)
-                    except Exception as exp:
-                        print("Error creating connection:", exp)
-                        return None
+                try:
+                    connection = psycopg2.connect(database = self.database, user = self.user, password = self.password, host =self.host)
+                    self.connections_queue.put(connection)
+                except Exception as exp:
+                    print("Error creating connection:", exp)
+                    return None
             else:
                 return None
 
@@ -56,13 +47,8 @@ class ConnectionPool:
             connection = self.connections_queue.get(timeout=2)
             self.active_connections +=1
         except Empty:
-            while True:
-                try:
-                    connection = self.connections_queue.get(timeout=2)
-                    self.active_connections +=1
-                    break
-                except Empty:
-                    pass
+            print('Planes send to another airport')
+            return None
         return connection
 
 
@@ -76,13 +62,10 @@ class ConnectionPool:
                     print("Error:", exp)
 
             print(f"""
-    Time from start: {round(time.time() - self.start_time, 2)}
-    Realised connections: {self.connections_released}
-    Active connections: {self.active_connections}
-    Available connections: {self.connections_queue.qsize()}
+    Operation time of the air traffic control tower {round(time.time() - self.start_time, 2)}
+    Planes that landed: {self.connections_released}
+    Planes in airport airspace: {self.active_connections}
                 """)
-            
-            time.sleep(5)
 
 
     def release_connection(self, connection):
