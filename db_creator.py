@@ -28,9 +28,9 @@ c = conn.cursor()
 
 #Create Main Table
 query = """CREATE TABLE flight_log (
-            plane_id SERIAL PRIMARY KEY,
-            flight_number INTEGER,
-            appearance_time TIMESTAMP);"""
+            log_id SERIAL PRIMARY KEY,
+            status VARCHAR,
+            appearance_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);"""
 
 try:
     c.execute(query)
