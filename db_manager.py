@@ -9,24 +9,12 @@ class DatabaseManager:
 
     
     def add_plane(self, flight_number, status, x, y, z, vector):
-        flight_log_query = "INSERT INTO flight_log status VALUE %s;"
-
-        plane_table = f"""CREATE TABLE {flight_number} (
-                        plane_id SERIAL PRIMARY KEY,
-                        log_id INT REFERENCE flight_log(log_id),
-                        x FLOAT,
-                        y FLOAT,
-                        z FLOAT,
-                        velocity_vector NUMERIC[]"""
-        
-        plane_table_query = f"""INSERT INTO {flight_number} (x, y, z, velocity_vector) VALUES ({x}, {y}, {z}, {vector})"""
-
-        try: 
+        query = f"""INSERT INTO flights_log (flight_number, status, x, y, z, velocity_vector)
+        VALUES ({flight_number}, {status}, {x}, {y}, {z}, {vector});"""
+        try:
             conn = self.connection_pool.get_connection()
             curr = conn.cursor()
-            curr.execute(flight_log_query, status)
-            curr.execute(plane_table)
-            curr.execute(plane_table_query)         #może rozbić funkcję na dwie niezależne (jedna dodająca do tabeli głownej druga tworząca i modyfikująca dane o samolocie)
+            curr.execute(query)
             conn.commit()
             msg = 'New plane over the airport'
             self.connection_pool.release_connection(conn)
@@ -34,19 +22,75 @@ class DatabaseManager:
             conn.rollback()
             msg = f"Error adding plane to db : {exp}"
         return msg
-    
-    
+
+
     def get_velocity_vector(self, flight_number):
-        pass
+        query = f"SELECT velocity_vector FROM flights_log WHERE flight_number = {flight_number};"
+        try:
+            conn = self.connection_pool.get_connection()
+            curr = conn.cursor()
+            curr.execute(query)
+            result = curr.fetchall()
+            self.connection_pool.release_connection(conn)
+            return result
+        except psycopg2.Error as exp:
+            msg = f"Error getting velocity for flight {flight_number}: {exp}"
+            return msg
+
+    def change_velocity_vector(self, vector, flight_number):
+        query = f"""UPDATE flights_log 
+        SET velocity_vector = {vector} 
+        WHERE flight_number = {flight_number};"""
+        try:
+            conn = self.connection_pool.get_connection()
+            curr = conn.cursor()
+            curr.execute(query)
+            conn.commit()
+        except psycopg2.Error as exp:
+            conn.rollback()
+            msg = f"Error changing velocity vector: {exp}"
+            return msg
 
 
-    def change_velocity_vector(self, vector):
-        pass
+    def get_appearance_time(self, flight_number):
+        query = f"SELECT appearance_time FROM flights_log WHERE flight_number = {flight_number};"
+        try:
+            conn = self.connection_pool.get_connection()
+            curr = conn.cursor()
+            curr.execute(query)
+            result = curr.fetchall()
+            self.connection_pool.release_connection(conn)
+            return result
+        except psycopg2.Error as exp:
+            msg = f"Error getting appearance time for flight {flight_number}: {exp}"
+            return msg
 
 
-    def get_appearance_time(self):
-        pass
+    def get_plane_position(self, flight_number):
+        query = f"SELECT (x, y z) FROM flights_log WHERE flight_number = {flight_number};"
+        try:
+            conn = self.connection_pool.get_connection()
+            curr = conn.cursor()
+            curr.execute(query)
+            result = curr.fetchall()
+            self.connection_pool.release_connection(conn)
+            return result
+        except psycopg2.Error as exp:
+            msg = f"Error getting plane coordinate, flight-{flight_number}: {exp}"
+            return msg
 
 
-    def mod_plane_position(self, flight_number):
-        pass
+    def mod_plane_position(self, flight_number, x, y, z):
+        query = f"""UPDATE flights_log
+        SET (x ,y ,z) = {x},{y},{z} 
+        WHERE flight_number = {flight_number};"""
+
+        try:
+            conn = self.connection_pool.get_connection()
+            curr = conn.cursor()
+            curr.execute(query)
+            conn.commit()
+        except psycopg2.Error as exp:
+            conn.rollback()
+            msg = f"Error changing velocity vector: {exp}"
+            return msg
