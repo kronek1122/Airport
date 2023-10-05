@@ -31,11 +31,11 @@ query = """CREATE TABLE flights_log (
             plane_id SERIAL PRIMARY KEY,
             flight_number INT,
             status VARCHAR,
-            appearance_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP),
+            appearance_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             x FLOAT,
             y FLOAT,
             z FLOAT,
-            velocity_vector NUMERIC[];"""
+            velocity_vector NUMERIC[]);"""
         
 
 try:
