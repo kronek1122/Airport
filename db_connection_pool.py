@@ -34,8 +34,8 @@ class ConnectionPool:
                 try:
                     connection = psycopg2.connect(database = self.database, user = self.user, password = self.password, host =self.host)
                     self.connections_queue.put(connection)
-                except Exception as exp:
-                    print("Error creating connection:", exp)
+                except Exception as error:
+                    print("Error creating connection:", error)
                     return None
             else:
                 return None
@@ -58,14 +58,16 @@ class ConnectionPool:
                 connection = self.connections_queue.get()
                 try:
                     connection.close()
-                except Exception as exp:
-                    print("Error:", exp)
+                except Exception as error:
+                    print("Error:", error)
 
             print(f"""
     Operation time of the air traffic control tower {round(time.time() - self.start_time, 2)}
     Planes that landed: {self.connections_released}
     Planes in airport airspace: {self.active_connections}
                 """)
+            
+            time.sleep(1)
 
 
     def release_connection(self, connection):
@@ -79,5 +81,5 @@ class ConnectionPool:
                     connection.close()
                     self.active_connections -=1
                     self.connections_released += 1
-                except Exception as exp:
-                    print("Error:", exp)
+                except Exception as error:
+                    print("Error:", error)
