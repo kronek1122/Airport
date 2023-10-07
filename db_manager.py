@@ -18,9 +18,9 @@ class DatabaseManager:
             conn.commit()
             msg = 'New plane over the airport'
             self.connection_pool.release_connection(conn)
-        except psycopg2.Error as exp:
+        except psycopg2.Error as error:
             conn.rollback()
-            msg = f"Error adding plane to db : {exp}"
+            msg = f"Error adding plane to db : {error}"
         return msg
 
 
@@ -33,8 +33,8 @@ class DatabaseManager:
             result = curr.fetchall()
             self.connection_pool.release_connection(conn)
             return result
-        except psycopg2.Error as exp:
-            msg = f"Error getting velocity for flight {flight_number}: {exp}"
+        except psycopg2.Error as error:
+            msg = f"Error getting velocity for flight {flight_number}: {error}"
             return msg
 
     def change_velocity_vector(self, vector, flight_number):
@@ -46,9 +46,9 @@ class DatabaseManager:
             curr = conn.cursor()
             curr.execute(query)
             conn.commit()
-        except psycopg2.Error as exp:
+        except psycopg2.Error as error:
             conn.rollback()
-            msg = f"Error changing velocity vector: {exp}"
+            msg = f"Error changing velocity vector: {error}"
             return msg
 
 
@@ -61,8 +61,8 @@ class DatabaseManager:
             result = curr.fetchall()
             self.connection_pool.release_connection(conn)
             return result
-        except psycopg2.Error as exp:
-            msg = f"Error getting appearance time for flight {flight_number}: {exp}"
+        except psycopg2.Error as error:
+            msg = f"Error getting appearance time for flight {flight_number}: {error}"
             return msg
 
 
@@ -90,7 +90,17 @@ class DatabaseManager:
             curr = conn.cursor()
             curr.execute(query)
             conn.commit()
-        except psycopg2.Error as exp:
+        except psycopg2.Error as error:
             conn.rollback()
-            msg = f"Error changing velocity vector: {exp}"
+            msg = f"Error changing velocity vector: {error}"
             return msg
+        
+
+    def num_of_plane_over_the_airport(self):
+        query = 'SELECT COUNT(*) FROM flights_log WHERE STATUS = IN_AIR'
+        conn = self.connection_pool.get_connection()
+        curr = conn.cursor()
+        curr.execute(query)
+        result = curr.fetchone()[0]
+        self.connection_pool.release_connection(conn)
+        return result
