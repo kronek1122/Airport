@@ -1,7 +1,6 @@
 import socket as s
 import time
 import random
-from plane_generator import PlaneGenerator
 
 
 class PlaneSocket:
@@ -15,8 +14,8 @@ class PlaneSocket:
 
     def send_socket(self):
         while True:
-            command = PlaneGenerator().new_plane().encode('utf8')
-            self.client_socket.sendall(command)
+            command = 'new plane'
+            self.client_socket.sendall(command.encode('utf8'))
             data = self.client_socket.recv(1024).decode('utf8')
             print(data)
             time.sleep(random.randint(1,7))
