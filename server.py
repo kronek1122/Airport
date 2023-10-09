@@ -1,9 +1,11 @@
 import socket as s
-
+from plane_manager import PlaneManager
 
 class Server:
 
     def __init__(self, host, port):
+        self.host = host
+        self.port = port
         self.server_socket = s.socket(s.AF_INET, s.SOCK_STREAM)
         self.server_socket.bind((self.host, self.port))
         self.server_socket.listen()
@@ -23,7 +25,5 @@ class Server:
 
             if not query:
                 break
-
-            query_list = self.json_unpacking(query)
         
-            connection.send("""funkcja tworząca i zarządzająca samolotami""").encode('utf8'))
+            connection.send(PlaneManager().new_plane().encode('utf8'))
