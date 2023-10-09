@@ -9,14 +9,21 @@ class DatabaseManager:
 
     
     def add_plane(self, flight_number, status, x, y, z, vector):
-        query = f"""INSERT INTO flights_log (flight_number, status, x, y, z, velocity_vector)
-        VALUES ({flight_number}, {status}, {x}, {y}, {z}, {vector});"""
+        query = """INSERT INTO flights_log (flight_number, status, x, y, z, velocity_vector)
+        VALUES (%s, %s, %s, %s, %s, %s)"""
+
+        values = (flight_number, status, x, y, z, vector)
+
         try:
             conn = self.connection_pool.get_connection()
             curr = conn.cursor()
-            curr.execute(query)
+            curr.execute(query, values)
             conn.commit()
-            msg = 'New plane over the airport'
+            msg = f"""New plane over the airport, 
+            flight number: {flight_number}; 
+            status: {status}; 
+            position: {x}, {y}, {z}; 
+            velocity vector: {vector} """ #Wiadomość sprawdzająca dodanie do bazy
             self.connection_pool.release_connection(conn)
         except psycopg2.Error as error:
             conn.rollback()
