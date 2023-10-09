@@ -14,7 +14,7 @@ class PlaneGenerator:
             case'ENE':
                 position = [r.randint(4500,5000), r.randint(0,5000), r.randint(500,2000)]
             case'NNW':
-                position = [-r.randint(5000,0), r.randint(4500,5000), r.randint(500,2000)]
+                position = [-r.randint(0,5000), r.randint(4500,5000), r.randint(500,2000)]
             case'WNW':
                 position = [-r.randint(4500,5000), r.randint(0,5000), r.randint(500,2000)]
             case'SSE':
@@ -22,7 +22,7 @@ class PlaneGenerator:
             case'ESE':
                 position = [r.randint(4500,5000), -r.randint(0,5000), r.randint(500,2000)]
             case'SSW':
-                position = [-r.randint(5000,0), -r.randint(4500,5000), r.randint(500,2000)]
+                position = [-r.randint(0,5000), -r.randint(4500,5000), r.randint(500,2000)]
             case'WSW':
                 position = [-r.randint(4500,5000), -r.randint(0,5000), r.randint(500,2000)]
         return position
