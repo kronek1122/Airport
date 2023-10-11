@@ -41,9 +41,3 @@ class PlaneGenerator:
         return vector
 
 
-    def flight_number_generator(self):
-        num = 1
-        while True:
-            yield num
-            num += 1
-

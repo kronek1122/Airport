@@ -26,4 +26,4 @@ class Server:
             if not query:
                 break
         
-            connection.send(PlaneManager().new_plane().encode('utf8'))
+            connection.send(PlaneManager(query).new_plane().encode('utf8'))
