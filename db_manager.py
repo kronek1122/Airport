@@ -19,11 +19,8 @@ class DatabaseManager:
             curr = conn.cursor()
             curr.execute(query, values)
             conn.commit()
-            msg = f"""New plane over the airport, 
-            flight number: {flight_number}; 
-            status: {status}; 
-            position: {x}, {y}, {z}; 
-            velocity vector: {vector} """ #Wiadomość sprawdzająca dodanie do bazy
+            msg = {"msg":"New plane over the airport",
+                   "flight_number": flight_number}
             self.connection_pool.release_connection(conn)
         except psycopg2.Error as error:
             conn.rollback()
