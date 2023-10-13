@@ -14,4 +14,4 @@ while True:
     flight_num = next(flight_num_gen)
     client = PlaneSocket(flight_num)
     client.send_socket()
-    time.sleep(random.randint(1,7))
+    time.sleep(1)

@@ -20,7 +20,8 @@ class PlaneSocket:
 
 
     def json_data_converter(self):
-        flight_data = {"position x":self.position_x,
+        flight_data = {"flight_number":self.flight_num,
+                       "position x":self.position_x,
                          "position y":self.position_y,
                          "position_z":self.position_z,
                          "velocity_vector":self.velocity}
@@ -29,7 +30,7 @@ class PlaneSocket:
 
 
     def vector_update(self, data):
-        self.velocity = data.get("velocity _vector")
+        self.velocity = data["velocity _vector"]
 
 
     def position_update(self):
@@ -49,7 +50,8 @@ class PlaneSocket:
                 break
             else:
                 received_dict = json.loads(received_data)
-                self.vector_update(received_dict)
+                #self.vector_update(received_data)
+                print(received_dict)
                 self.position_update()
 
                 if self.position_z == 0:
