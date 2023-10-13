@@ -28,13 +28,12 @@ c = conn.cursor()
 
 #Create Main Table
 query = """CREATE TABLE flights_log (
-            plane_id SERIAL PRIMARY KEY,
-            flight_number INT,
+            flight_number INT UNIQUE,
             status VARCHAR,
             appearance_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            x FLOAT,
-            y FLOAT,
-            z FLOAT,
+            x INT,
+            y INT,
+            z INT,
             velocity_vector NUMERIC[]);"""
         
 
