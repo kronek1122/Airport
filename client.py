@@ -20,17 +20,17 @@ class PlaneSocket:
 
 
     def json_data_converter(self):
-        flight_data = {"flight_number":self.flight_num,
-                       "position x":self.position_x,
-                         "position y":self.position_y,
-                         "position_z":self.position_z,
-                         "velocity_vector":self.velocity}
+        flight_data = {'flight_number':self.flight_num,
+                       'position x':self.position_x,
+                       'position y':self.position_y,
+                       'position_z':self.position_z,
+                       'velocity_vector':self.velocity}
         self.json_flight_data = json.dumps(flight_data)
         return self.json_flight_data
 
 
     def vector_update(self, data):
-        self.velocity = data["velocity _vector"]
+        self.velocity = data['velocity_vector']
 
 
     def position_update(self):
@@ -40,24 +40,21 @@ class PlaneSocket:
 
 
     def send_socket(self):
-        while self.in_air == True:
+        while True:
             flight_data = self.json_data_converter()
+            print(flight_data)
             self.client_socket.sendall(flight_data.encode('utf8'))
             received_data = self.client_socket.recv(1024).decode('utf8')
 
-            if received_data == 'to many planes in the air':
+            if received_data == 'to many planes in the air' or received_data == 'landed':
                 print(received_data)
                 break
             else:
                 received_dict = json.loads(received_data)
-                #self.vector_update(received_data)
-                print(received_dict)
+                print(f"otrzymane dane: {received_dict}")
+                self.vector_update(received_dict)
+                print(self.position_x, self.position_y, self.position_z)
                 self.position_update()
-
-                if self.position_z == 0:
-                    flight_data = 'plane landed'
-                    self.client_socket.sendall(flight_data.encode('utf8'))
-                    print(flight_data)
-                    break
+                print(self.position_x, self.position_y, self.position_z)
 
             time.sleep(1)

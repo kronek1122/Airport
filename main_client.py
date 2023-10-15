@@ -1,5 +1,4 @@
 import time
-import random
 from client import PlaneSocket
 
 def flight_number_generator():
