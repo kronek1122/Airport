@@ -12,9 +12,6 @@ class Server:
         self.server_socket.bind((self.host, self.port))
         self.server_socket.listen()
 
-    def json_data_converter(self, data):
-        self.json_flight_data = json.dumps(data)
-        return self.json_flight_data
 
     def run(self):
         connection, address = self.server_socket.accept()
@@ -22,7 +19,11 @@ class Server:
 
         while True:
             query = connection.recv(1024).decode('utf8')
-            received_dict = json.loads(query)
-            data = PlaneManager(received_dict).plane_signal()
-            json_data = self.json_data_converter(data)
-            connection.sendall(json_data.encode('utf8'))
+            if query:
+                received_data = json.loads(query)
+                plane_manager = PlaneManager(received_data)
+                response_data = plane_manager.plane_signal()
+                print(response_data)
+                json_response_data = json.dumps(response_data)
+                connection.sendall(json_response_data.encode('utf8'))
+
