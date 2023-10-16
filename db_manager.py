@@ -27,36 +27,6 @@ class DatabaseManager:
         return msg
 
 
-    def get_velocity_vector(self, flight_number):
-        query = f'SELECT velocity_vector FROM flights_log WHERE flight_number = {flight_number};'
-        try:
-            conn = self.connection_pool.get_connection()
-            curr = conn.cursor()
-            curr.execute(query)
-            result = curr.fetchall()
-            self.connection_pool.release_connection(conn)
-            return result
-        except psycopg2.Error as error:
-            msg = f'Error getting velocity for flight {flight_number}: {error}'
-            return msg
-
-
-    def change_velocity_vector(self, flight_number, vector):
-        query = f'''UPDATE flights_log 
-        SET velocity_vector = {vector} 
-        WHERE flight_number = {flight_number};'''
-        try:
-            conn = self.connection_pool.get_connection()
-            curr = conn.cursor()
-            curr.execute(query)
-            conn.commit()
-            self.connection_pool.release_connection(conn)
-        except psycopg2.Error as error:
-            conn.rollback()
-            msg = f'Error changing velocity vector: {error}'
-            return msg
-
-
     def change_status(self, flight_number, status):
         query = f'''UPDATE flights_log 
         SET status = {status} 
@@ -73,37 +43,9 @@ class DatabaseManager:
             return msg
 
 
-    def get_appearance_time(self, flight_number):
-        query = f'SELECT appearance_time FROM flights_log WHERE flight_number = {flight_number};'
-        try:
-            conn = self.connection_pool.get_connection()
-            curr = conn.cursor()
-            curr.execute(query)
-            result = curr.fetchall()
-            self.connection_pool.release_connection(conn)
-            return result
-        except psycopg2.Error as error:
-            msg = f'Error getting appearance time for flight {flight_number}: {error}'
-            return msg
-
-
-    def get_plane_position(self, flight_number):
-        query = f'SELECT (x, y z) FROM flights_log WHERE flight_number = {flight_number};'
-        try:
-            conn = self.connection_pool.get_connection()
-            curr = conn.cursor()
-            curr.execute(query)
-            result = curr.fetchall()
-            self.connection_pool.release_connection(conn)
-            return result
-        except psycopg2.Error as exp:
-            msg = f"Error getting plane coordinate, flight-{flight_number}: {exp}"
-            return msg
-
-
-    def mod_plane_position(self, flight_number, x, y, z):
+    def change_plane_position_and_vector(self, flight_number, x, y, z, vector):
         query = f'''UPDATE flights_log
-        SET x = {x}, y = {y}, z = {z} 
+        SET x = {x}, y = {y}, z = {z} , velocity_vector = {vector}
         WHERE flight_number = {flight_number};'''
 
         try:
@@ -112,14 +54,14 @@ class DatabaseManager:
             curr.execute(query)
             conn.commit()
             self.connection_pool.release_connection(conn)
-            msg = 'Plane position changed'
+            msg = 'Plane position and velocity vector changed'
         except psycopg2.Error as error:
             conn.rollback()
-            msg = f'Error changing plane position: {error}'
+            msg = f'Error changing plane position and velocity vector: {error}'
             return msg
         
 
-    def num_of_plane_over_the_airport(self):
+    def num_of_planes_over_the_airport(self):
         query = "SELECT COUNT(*) FROM flights_log WHERE STATUS = 'IN_AIR';"
         conn = self.connection_pool.get_connection()
         curr = conn.cursor()
