@@ -1,5 +1,6 @@
 import socket as s
 import json
+import threading
 from plane_manager import PlaneManager
 
 class Server:
@@ -13,17 +14,23 @@ class Server:
         self.server_socket.listen()
 
 
-    def run(self):
-        connection, address = self.server_socket.accept()
+    def handle_client(self, connection, address):
         print(f'Connected by {address}')
 
         while True:
             query = connection.recv(1024).decode('utf8')
-            if query:
-                received_data = json.loads(query)
-                plane_manager = PlaneManager(received_data)
-                response_data = plane_manager.plane_signal()
-                print(response_data)
-                json_response_data = json.dumps(response_data)
-                connection.sendall(json_response_data.encode('utf8'))
+            if not query:
+                break
+            received_data = json.loads(query)
+            plane_manager = PlaneManager(received_data)
+            response_data = plane_manager.plane_signal()
+            print(response_data)
+            json_response_data = json.dumps(response_data)
+            connection.sendall(json_response_data.encode('utf8'))
+
+    def run(self):
+        while True:
+            connection, address = self.server_socket.accept()
+            thread = threading.Thread(target=self.handle_client, args=(connection, address))
+            thread.start()
 
