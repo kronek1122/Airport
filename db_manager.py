@@ -50,6 +50,7 @@ class DatabaseManager:
             curr = conn.cursor()
             curr.execute(query)
             conn.commit()
+            self.connection_pool.release_connection(conn)
         except psycopg2.Error as error:
             conn.rollback()
             msg = f'Error changing velocity vector: {error}'
@@ -65,10 +66,10 @@ class DatabaseManager:
             curr = conn.cursor()
             curr.execute(query)
             conn.commit()
+            self.connection_pool.release_connection(conn)
         except psycopg2.Error as error:
             conn.rollback()
             msg = f'Error changing status: {error}'
-            print(msg)  #robocze
             return msg
 
 
@@ -110,11 +111,11 @@ class DatabaseManager:
             curr = conn.cursor()
             curr.execute(query)
             conn.commit()
+            self.connection_pool.release_connection(conn)
             msg = 'Plane position changed'
         except psycopg2.Error as error:
             conn.rollback()
             msg = f'Error changing plane position: {error}'
-            print(msg)  #robocze
             return msg
         
 
