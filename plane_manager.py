@@ -27,11 +27,10 @@ class PlaneManager:
             print(msg)
             result = 'landed'
         else:
-            if self.db.num_of_plane_over_the_airport() < 100:
+            if self.db.num_of_planes_over_the_airport() < 100:
                 msg = self.db.add_plane(self.flight_number,'IN_AIR',self.position_x, self.position_y, self.position_z, self.velocity)
                 if msg == 'Error adding new plane to db':
-                    self.db.change_velocity_vector(self.flight_number,self.velocity)
-                    self.db.mod_plane_position(self.flight_number, self.position_x, self.position_y, self.position_z)
+                    self.db.change_plane_position_and_vector(self.flight_number, self.position_x, self.position_y, self.position_z, self.velocity)
                     result = self.control_tower_system()
                 else:
                     result = self.control_tower_system()
