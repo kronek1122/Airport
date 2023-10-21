@@ -64,8 +64,11 @@ class ConnectionPool:
                     connection.close()
                 except Exception as error:
                     print("Error:", error)
-
-            time.sleep(5)
+            print(f"""
+                Ilość połączeń wykonanych: {self.connections_released}
+                Ilość aktualnie aktywnych połączeń: {self.active_connections}
+                  """)
+            time.sleep(1)
 
 
     def release_connection(self, connection):
