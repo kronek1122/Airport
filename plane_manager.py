@@ -1,24 +1,14 @@
 '''Manage planes script'''
 
-import os
-from dotenv import load_dotenv
-from db_manager import DatabaseManager
-
-load_dotenv()
-
-
 class PlaneManager:
     
-    def __init__(self, dictionary):
-        postgres_config_str = os.getenv('POSTGRES_CONFIG_DB')
-        self.postgres_config = eval(postgres_config_str)
+    def __init__(self, dictionary, connection):
         self.flight_number = dictionary['flight_number']
         self.position_x = dictionary['position x']
         self.position_y = dictionary['position y']
         self.position_z = dictionary['position_z']
         self.velocity = dictionary['velocity_vector']
-        self.db = DatabaseManager(**self.postgres_config)
-
+        self.db = connection
 
     def plane_signal(self):
         if self.position_z == 0:
@@ -49,5 +39,7 @@ class PlaneManager:
         result = {'velocity_vector':self.velocity}
         return result
 
+    def close(self):
+        self.db.close_connection()
     
     

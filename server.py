@@ -1,17 +1,27 @@
+import os
 import socket as s
 import json
 import threading
 from plane_manager import PlaneManager
+from db_manager import DatabaseManager
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Server:
 
     def __init__(self, host, port, info):
+        postgres_config_str = os.getenv('POSTGRES_CONFIG_DB')
+        self.postgres_config = eval(postgres_config_str)
         self.host = host
         self.port = port
         self.info = info
+        self.active_threads = 0
         self.server_socket = s.socket(s.AF_INET, s.SOCK_STREAM)
         self.server_socket.bind((self.host, self.port))
-        self.server_socket.listen()
+        self.server_socket.listen(100)
+        self.db = DatabaseManager(**self.postgres_config)
+
 
 
     def handle_client(self, connection, address):
@@ -22,7 +32,7 @@ class Server:
             if not query:
                 break
             received_data = json.loads(query)
-            plane_manager = PlaneManager(received_data)
+            plane_manager = PlaneManager(received_data, self.db)
             response_data = plane_manager.plane_signal()
             print(response_data)
             json_response_data = json.dumps(response_data)
@@ -30,7 +40,9 @@ class Server:
 
     def run(self):
         while True:
+            print(f"ilość wątków serwera: {self.active_threads}")
             connection, address = self.server_socket.accept()
             thread = threading.Thread(target=self.handle_client, args=(connection, address))
             thread.start()
+            self.active_threads +=1
 
