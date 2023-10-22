@@ -34,7 +34,9 @@ query = """CREATE TABLE flights_log (
             x INT,
             y INT,
             z INT,
-            velocity_vector NUMERIC[]);"""
+            velocity_vector_x INT,
+            velocity_vector_y INT,
+            velocity_vector_z INT);"""
         
 
 try:
