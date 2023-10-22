@@ -18,9 +18,10 @@ class PlaneManager:
         if self.position_z == 0:
             self.db.change_status(self.flight_number, 'LANDED')
             result = {'msg':'landed',
-                      'status':'overloaded',}
+                      'status':'overloaded'}
         else:
-            if self.db.num_of_planes_over_the_airport() < 100:
+            print(self.db.plane_status(self.flight_number))
+            if self.db.num_of_planes_over_the_airport() < 100 or self.db.plane_status(self.flight_number)=='IN_AIR':
                 msg = self.db.add_plane(self.flight_number,'IN_AIR',self.position_x, self.position_y, self.position_z, self.velocity_x, self.velocity_y, self.velocity_z)
                 if msg['msg'] == 'Error adding new plane to db':
                     self.db.change_plane_position_and_vector(self.flight_number, self.position_x, self.position_y, self.position_z, self.velocity_x, self.velocity_y, self.velocity_z)
@@ -29,7 +30,8 @@ class PlaneManager:
                     result = self.control_tower_system()
             else: 
                 result = {'msg':'to many planes in the air',
-                          'status':'overloaded',}
+                          'status':'overloaded'}
+        print(self.db.num_of_planes_over_the_airport())
         return result
 
 
@@ -42,7 +44,7 @@ class PlaneManager:
     def dictionary_data_pack(self):
         result = {'msg':'change direction',
                   'status':"IN_AIR",
-            'velocity_vector':self.velocity}
+                  'velocity_vector':self.velocity}
         return result
     
     
