@@ -19,7 +19,7 @@ class Server:
         self.active_threads = 0
         self.server_socket = s.socket(s.AF_INET, s.SOCK_STREAM)
         self.server_socket.bind((self.host, self.port))
-        self.server_socket.listen(100)
+        self.server_socket.listen()
         self.db = DatabaseManager(**self.postgres_config)
 
 
@@ -34,7 +34,6 @@ class Server:
             received_data = json.loads(query)
             plane_manager = PlaneManager(received_data, self.db)
             response_data = plane_manager.plane_signal()
-            print(response_data)
             json_response_data = json.dumps(response_data)
             connection.sendall(json_response_data.encode('utf8'))
 
