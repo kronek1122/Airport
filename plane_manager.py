@@ -8,6 +8,7 @@ class PlaneManager:
         self.position_x = dictionary['position x']
         self.position_y = dictionary['position y']
         self.position_z = dictionary['position_z']
+        self.status = dictionary['status']
         self.velocity = dictionary['velocity_vector']
         self.velocity_x = self.velocity[0]
         self.velocity_y = self.velocity[1]
@@ -20,18 +21,16 @@ class PlaneManager:
             result = {'msg':'landed',
                       'status':'overloaded'}
         else:
-            print(self.db.plane_status(self.flight_number))
             if self.db.num_of_planes_over_the_airport() < 100 or self.db.plane_status(self.flight_number)=='IN_AIR':
-                msg = self.db.add_plane(self.flight_number,'IN_AIR',self.position_x, self.position_y, self.position_z, self.velocity_x, self.velocity_y, self.velocity_z)
+                msg = self.db.add_plane(self.flight_number, self.status, self.position_x, self.position_y, self.position_z, self.velocity_x, self.velocity_y, self.velocity_z)
                 if msg['msg'] == 'Error adding new plane to db':
-                    self.db.change_plane_position_and_vector(self.flight_number, self.position_x, self.position_y, self.position_z, self.velocity_x, self.velocity_y, self.velocity_z)
+                    self.db.change_plane_information(self.flight_number, self.status, self.position_x, self.position_y, self.position_z, self.velocity_x, self.velocity_y, self.velocity_z)
                     result = self.control_tower_system()
                 else:
                     result = self.control_tower_system()
             else: 
                 result = {'msg':'to many planes in the air',
                           'status':'overloaded'}
-        print(self.db.num_of_planes_over_the_airport())
         return result
 
 
@@ -46,5 +45,3 @@ class PlaneManager:
                   'status':"IN_AIR",
                   'velocity_vector':self.velocity}
         return result
-    
-    
