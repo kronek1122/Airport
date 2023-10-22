@@ -51,15 +51,15 @@ class DatabaseManager:
         return msg
 
 
-    def change_plane_position_and_vector(self, flight_number:int, x:int, y:int, z:int, vector_x:int, vector_y:int, vector_z:int)-> dict:
+    def change_plane_information(self, flight_number:int, status:str, x:int, y:int, z:int, vector_x:int, vector_y:int, vector_z:int)-> dict:
         query = '''UPDATE flights_log
-        SET x = %s, y = %s, z = %s , velocity_vector_x = %s, velocity_vector_y = %s, velocity_vector_z = %s
+        SET status = %s, x = %s, y = %s, z = %s , velocity_vector_x = %s, velocity_vector_y = %s, velocity_vector_z = %s
         WHERE flight_number = %s;'''
 
         try:
             conn = self.connection_pool.get_connection()
             curr = conn.cursor()
-            values = (flight_number, x, y, z, vector_x, vector_y, vector_z)
+            values = (status, x, y, z, vector_x, vector_y, vector_z, flight_number)
             curr.execute(query,values)
             conn.commit()
             msg = {'msg': 'Plane position and velocity vector changed',
