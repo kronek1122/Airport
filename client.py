@@ -42,19 +42,14 @@ class PlaneSocket:
     def send_socket(self):
         while True:
             flight_data = self.json_data_converter()
-            print(flight_data)
             self.client_socket.sendall(flight_data.encode('utf8'))
             received_data = self.client_socket.recv(1024).decode('utf8')
+            received_dict = json.loads(received_data)
 
-            if received_data == 'to many planes in the air' or received_data == 'landed':
-                print(received_data)
+            if received_data['msg'] == 'to many planes in the air' or received_data['msg'] == 'landed':
                 break
             else:
-                received_dict = json.loads(received_data)
-                print(f"otrzymane dane: {received_dict}")
                 self.vector_update(received_dict)
-                print(self.position_x, self.position_y, self.position_z)
                 self.position_update()
-                print(self.position_x, self.position_y, self.position_z)
 
             time.sleep(1)
