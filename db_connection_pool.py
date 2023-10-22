@@ -11,7 +11,7 @@ class ConnectionPool:
         self.password = password
         self.host = host
         self.min_connections = 3
-        self.max_connections = 200
+        self.max_connections = 100
         self.connections_queue = Queue(maxsize=self.max_connections)
         self.semaphore = threading.Semaphore()
         self.connections_released = 0
@@ -67,16 +67,17 @@ class ConnectionPool:
             print(f"""
                 Ilość połączeń wykonanych: {self.connections_released}
                 Ilość aktualnie aktywnych połączeń: {self.active_connections}
+                Ilość dostępnych połączeń (w kolejce): {self.connections_queue.qsize()}
                   """)
             time.sleep(1)
 
 
     def release_connection(self, connection):
-        with self.semaphore:
+        with self.semaphore:           
             try:
-                self.connections_queue.put(connection)
+                self.connections_queue.put(connection, block=False)
                 self.active_connections -=1
-                self.connections_released += 1
+                self.connections_released += 1            
             except Full:
                 try:
                     connection.close()
