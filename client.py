@@ -17,14 +17,22 @@ class PlaneSocket:
         self.position_y = self.position[1]
         self.position_z = self.position[2]
         self.velocity = PlaneGenerator().vector_generator()
+        self.fuel_empty_time = time.time() + (3*3600)
+        self.is_fuel = True
 
-
-    def json_data_converter(self):
+    def data_dictionary(self):
         flight_data = {'flight_number':self.flight_num,
                        'position x':self.position_x,
                        'position y':self.position_y,
                        'position_z':self.position_z,
-                       'velocity_vector':self.velocity}
+                       'velocity_vector':self.velocity,
+                       'IS_FUEL':self.is_fuel,
+                       'status':'IN_AIR'}
+        return flight_data
+
+
+    def json_data_converter(self):
+        flight_data = self.data_dictionary()
         self.json_flight_data = json.dumps(flight_data)
         return self.json_flight_data
 
@@ -39,14 +47,31 @@ class PlaneSocket:
         self.position_z += self.velocity[2]
 
 
+    def fuel_gauge_check(self):
+        if time.time() > self.fuel_empty_time:
+            self.is_fuel = False
+        else: self.is_fuel = True
+
+
     def send_socket(self):
         while True:
-            flight_data = self.json_data_converter()
-            self.client_socket.sendall(flight_data.encode('utf8'))
+            flight_data = self.data_dictionary()
+            self.fuel_gauge_check()
+            if flight_data['IS_FUEL'] is False:
+                flight_data['status'] = 'Plane crashed'
+                self.client_socket.sendall(flight_data.encode('utf8'))
+                break
+
+            flight_data_json = self.json_data_converter()
+            self.client_socket.sendall(flight_data_json.encode('utf8'))
             received_data = self.client_socket.recv(1024).decode('utf8')
             received_dict = json.loads(received_data)
 
-            if received_data['msg'] == 'to many planes in the air' or received_data['msg'] == 'landed':
+            print(f'''
+                    lot numer: {flight_data}
+                  otrzymane dane: {received_dict}''')
+
+            if received_dict['msg'] == 'to many planes in the air' or received_dict['msg'] == 'landed':
                 break
             else:
                 self.vector_update(received_dict)
