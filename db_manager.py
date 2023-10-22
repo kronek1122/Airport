@@ -75,10 +75,22 @@ class DatabaseManager:
         
 
     def num_of_planes_over_the_airport(self):
-        query = "SELECT COUNT(*) FROM flights_log WHERE STATUS = 'IN_AIR';"
+        query = "SELECT COUNT(*) FROM flights_log WHERE status = 'IN_AIR';"
         conn = self.connection_pool.get_connection()
         curr = conn.cursor()
         curr.execute(query)
         result = curr.fetchone()[0]
+        self.connection_pool.release_connection(conn)
+        return result
+    
+
+    def plane_status(self,flight_number:int):
+        query = "SELECT status FROM flights_log WHERE flight_number = %s;"
+        conn = self.connection_pool.get_connection()
+        curr = conn.cursor()
+        curr.execute(query, (flight_number,))
+        result = curr.fetchone()
+        if result:
+            result = result[0]
         self.connection_pool.release_connection(conn)
         return result
