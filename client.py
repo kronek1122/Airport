@@ -6,6 +6,7 @@ from plane_generator import PlaneGenerator
 class PlaneSocket:
     HOST = '127.0.0.1'
     PORT = 65432
+    FUEL_SUPPLY = (3*3600)
 
     def __init__(self, flight_num):
         self.client_socket = s.socket(s.AF_INET, s.SOCK_STREAM)
@@ -17,17 +18,18 @@ class PlaneSocket:
         self.position_y = self.position[1]
         self.position_z = self.position[2]
         self.velocity = PlaneGenerator().vector_generator()
-        self.fuel_empty_time = time.time() + (3*3600)
+        self.fuel_empty_time = time.time() + self.FUEL_SUPPLY
         self.is_fuel = True
+        self.status = 'IN_AIR'
 
     def data_dictionary(self):
         flight_data = {'flight_number':self.flight_num,
-                       'position x':self.position_x,
-                       'position y':self.position_y,
+                       'position_x':self.position_x,
+                       'position_y':self.position_y,
                        'position_z':self.position_z,
                        'velocity_vector':self.velocity,
                        'IS_FUEL':self.is_fuel,
-                       'status':'IN_AIR'}
+                       'status':self.status}
         return flight_data
 
 
@@ -58,8 +60,9 @@ class PlaneSocket:
             flight_data = self.data_dictionary()
             self.fuel_gauge_check()
             if flight_data['IS_FUEL'] is False:
-                flight_data['status'] = 'Plane crashed'
-                self.client_socket.sendall(flight_data.encode('utf8'))
+                self.status = 'Plane crashed'
+                flight_data_json = self.json_data_converter()
+                self.client_socket.sendall(flight_data_json.encode('utf8'))
                 break
 
             flight_data_json = self.json_data_converter()
@@ -68,8 +71,8 @@ class PlaneSocket:
             received_dict = json.loads(received_data)
 
             print(f'''
-                    lot numer: {flight_data}
-                  otrzymane dane: {received_dict}''')
+                lot numer: {flight_data}
+                otrzymane dane: {received_dict}''')
 
             if received_dict['msg'] == 'to many planes in the air' or received_dict['msg'] == 'landed':
                 break
