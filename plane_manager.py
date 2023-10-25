@@ -1,15 +1,17 @@
 '''Manage planes script'''
 from db_connection_pool import ConnectionPool
+from control_tower import ControlTower
 
 class PlaneManager:
     
     def __init__(self, dictionary:dict, connection):
-        self.flight_number = dictionary['flight_number']
-        self.position_x = dictionary['position x']
-        self.position_y = dictionary['position y']
-        self.position_z = dictionary['position_z']
-        self.status = dictionary['status']
-        self.velocity = dictionary['velocity_vector']
+        self.dictionary = dictionary
+        self.flight_number = self.dictionary['flight_number']
+        self.position_x = self.dictionary['position_x']
+        self.position_y = self.dictionary['position_y']
+        self.position_z = self.dictionary['position_z']
+        self.status = self.dictionary['status']
+        self.velocity = self.dictionary['velocity_vector']
         self.velocity_x = self.velocity[0]
         self.velocity_y = self.velocity[1]
         self.velocity_z = self.velocity[2]
@@ -35,13 +37,5 @@ class PlaneManager:
 
 
     def control_tower_system(self):
-        #dodać system sterowanie ruchem
-        result = self.dictionary_data_pack()
-        return result
-
-
-    def dictionary_data_pack(self):
-        result = {'msg':'change direction',
-                  'status':"IN_AIR",
-                  'velocity_vector':self.velocity}
+        result = ControlTower(self.dictionary).dictionary_data_pack()   #robocze
         return result
