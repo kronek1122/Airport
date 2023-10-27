@@ -37,5 +37,6 @@ class PlaneManager:
 
 
     def control_tower_system(self):
-        result = ControlTower(self.dictionary).dictionary_data_pack()   #robocze
+        control_tower = ControlTower(self.dictionary)
+        result = control_tower.guidance_system()
         return result
