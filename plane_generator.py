@@ -31,13 +31,13 @@ class PlaneGenerator:
         self.velocity_vector_x = r.randint(0,self.velocity)
         match self.direction:
             case'NNE' | 'ENE':
-                vector = [-self.velocity_vector_x, -((self.velocity**2-self.velocity_vector_x**2)**0.5), 0]
+                vector = [-self.velocity_vector_x, -int((self.velocity**2-self.velocity_vector_x**2)**0.5), 0]
             case'NNW' | 'WNW':
-                vector = [self.velocity_vector_x, -((self.velocity**2-self.velocity_vector_x**2)**0.5), 0]
+                vector = [self.velocity_vector_x, -int((self.velocity**2-self.velocity_vector_x**2)**0.5), 0]
             case'SSE' | 'ESE':
-                vector = [-self.velocity_vector_x, ((self.velocity**2-self.velocity_vector_x**2)**0.5), 0]
+                vector = [-self.velocity_vector_x, int((self.velocity**2-self.velocity_vector_x**2)**0.5), 0]
             case'SSW' | 'WSW':
-                vector = [self.velocity_vector_x, ((self.velocity**2-self.velocity_vector_x**2)**0.5), 0]
+                vector = [self.velocity_vector_x, int((self.velocity**2-self.velocity_vector_x**2)**0.5), 0]
         return vector
 
 
