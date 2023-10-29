@@ -12,7 +12,7 @@ try:
     conn.autocommit = True
     c = conn.cursor()
 
-    c.execute('DROP DATABASE IF EXISTS control_tower;')
+    c.execute('DROP DATABASE IF EXISTS control_tower WITH (FORCE);')
 
 except psycopg2.Error as e:
     print("Database delete error", e)
