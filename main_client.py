@@ -1,6 +1,7 @@
 import time
 import threading
 from client import PlaneSocket
+import random
 
 active_threads = 0
 def flight_number_generator():
@@ -17,8 +18,7 @@ flight_num_gen = flight_number_generator()
 
 while True:
     flight_num = next(flight_num_gen)
-    print(f"ilość wątków clienta: {active_threads}")
     thread = threading.Thread(target=create_client, args=(flight_num,))
     thread.start()
     active_threads +=1
-    time.sleep(0.2)
+    time.sleep(random.randint(1,5))
