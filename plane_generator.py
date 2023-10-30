@@ -10,21 +10,21 @@ class PlaneGenerator:
     def position_generator(self):
         match self.direction:
             case'NNE':
-                position = [r.randint(0,5000), r.randint(4500,5000), r.randint(500,2000)]
+                position = [r.randint(0,5000), r.randint(4500,5000), r.randint(2000,5000)]
             case'ENE':
-                position = [r.randint(4500,5000), r.randint(0,5000), r.randint(500,2000)]
+                position = [r.randint(4500,5000), r.randint(0,5000), r.randint(2000,5000)]
             case'NNW':
-                position = [-r.randint(0,5000), r.randint(4500,5000), r.randint(500,2000)]
+                position = [-r.randint(0,5000), r.randint(4500,5000), r.randint(2000,5000)]
             case'WNW':
-                position = [-r.randint(4500,5000), r.randint(0,5000), r.randint(500,2000)]
+                position = [-r.randint(4500,5000), r.randint(0,5000), r.randint(2000,5000)]
             case'SSE':
-                position = [r.randint(0,5000), -r.randint(4500,5000), r.randint(500,2000)]
+                position = [r.randint(0,5000), -r.randint(4500,5000), r.randint(2000,5000)]
             case'ESE':
-                position = [r.randint(4500,5000), -r.randint(0,5000), r.randint(500,2000)]
+                position = [r.randint(4500,5000), -r.randint(0,5000), r.randint(2000,5000)]
             case'SSW':
-                position = [-r.randint(0,5000), -r.randint(4500,5000), r.randint(500,2000)]
+                position = [-r.randint(0,5000), -r.randint(4500,5000), r.randint(2000,5000)]
             case'WSW':
-                position = [-r.randint(4500,5000), -r.randint(0,5000), r.randint(500,2000)]
+                position = [-r.randint(4500,5000), -r.randint(0,5000), r.randint(2000,5000)]
         return position
 
     def vector_generator(self):
