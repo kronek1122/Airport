@@ -94,3 +94,21 @@ class DatabaseManager:
             result = result[0]
         self.connection_pool.release_connection(conn)
         return result
+
+
+    def get_coordinates(self):
+        query = "SELECT x, y, z FROM flights_log WHERE status = 'IN_AIR';"
+
+        try:
+            conn = self.connection_pool.get_connection()
+            curr = conn.cursor()
+            curr.execute(query)
+            result = curr.fetchall()
+            coordinates = [(x, y, z) for x, y, z in result]
+        except psycopg2.Error as error:
+            coordinates = []
+            print(f"Error retrieving coordinates: {error}")
+        finally:
+            self.connection_pool.release_connection(conn)
+        return coordinates
+
