@@ -4,6 +4,7 @@ import json
 import threading
 from plane_manager import PlaneManager
 from db_manager import DatabaseManager
+from visualization import Visualization3D
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -21,7 +22,7 @@ class Server:
         self.server_socket.bind((self.host, self.port))
         self.server_socket.listen()
         self.db = DatabaseManager(**self.postgres_config)
-
+        self.visualization = Visualization3D(self.db)
 
 
     def handle_client(self, connection, address):
@@ -44,4 +45,3 @@ class Server:
             thread = threading.Thread(target=self.handle_client, args=(connection, address))
             thread.start()
             self.active_threads +=1
-
