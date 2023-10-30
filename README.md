@@ -10,6 +10,7 @@ A maximum of 100 planes can be in the air (db_connection_pool takes care of that
 Requirements: 
 - dotenv
 - psycopg2
-- standards modules (threading, queue, os, time)
+- matplotlib
+- standards modules (threading, queue, os, time, multiprocessing)
 
 
