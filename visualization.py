@@ -37,7 +37,10 @@ class Visualization3D:
         self.create_rectangle(rectangle1_vertices, face_color='c', edge_color='b', alpha=0.8)
         self.create_rectangle(rectangle2_vertices, face_color='c', edge_color='r', alpha=0.8)
 
-        x, y, z, flight_number = self.generate_data()
+        try:
+            x, y, z, flight_number = self.generate_data()
+        except ValueError:
+            x, y, z, flight_number = [], [], [], []
 
         self.ax.set_xlim(-5500, 5500)
         self.ax.set_ylim(-5500, 5500)
