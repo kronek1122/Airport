@@ -9,83 +9,84 @@ class ControlTower:
     SECTOR_R1 = (1000, 1000, 0)
     SECTOR_R2 = (-1000, -1000, 0)
 
-    def __init__(self, dictionary:dict):
+
+    def __init__(self, dictionary:dict, connection):
         self.position_x = dictionary['position_x']
         self.position_y = dictionary['position_y']
         self.position_z = dictionary['position_z']
+        self.flight_number = dictionary['flight_number']
+        self.status = dictionary['status']
         self.velocity = dictionary['velocity_vector']
         self.velocity_x = self.velocity[0]
         self.velocity_y = self.velocity[1]
         self.velocity_z = self.velocity[2]
+        self.conn = connection
 
 
     def guidance_system(self):
         if self.position_x >= -2500 and self.position_y >= 2000:
-            print('sektor A')
             distance = self.distance_calculation(self.SECTOR_A,(self.position_x, self.position_y, self.position_z))
             speed = 250
 
         elif self.position_x <= 2500 and self.position_y <= -2000:
-            print('sektor D')
             distance = self.distance_calculation(self.SECTOR_D,(self.position_x, self.position_y, self.position_z))
             speed = 250
 
         elif self.position_x < -2500 and self.position_y > -2000:
-            print('sektor B')
             distance = self.distance_calculation(self.SECTOR_B,(self.position_x, self.position_y, self.position_z))
             speed = 250
 
         elif self.position_x > 2500 and self.position_y < 2000:
-            print('sektor E')
             distance = self.distance_calculation(self.SECTOR_E,(self.position_x, self.position_y, self.position_z))
             speed = 250
 
         elif self.position_x < -1500 and self.position_y > 0:
-            print('sektor AB')
             distance = self.distance_calculation(self.SECTOR_C,(self.position_x, self.position_y, self.position_z))
-            speed = 160
+            speed = 200
 
         elif self.position_x > 1500 and self.position_y < 0:
-            print('sektor ED')
             distance = self.distance_calculation(self.SECTOR_F,(self.position_x, self.position_y, self.position_z))
-            speed = 160
+            speed = 200
 
         elif self.position_x < -1000 and self.position_y > 0:
-            print('sektor C')
             distance = self.distance_calculation(self.SECTOR_R1,(self.position_x, self.position_y, self.position_z))
-            speed = 100
+            speed = 150
 
         elif self.position_x > 1000 and self.position_y < 0:
-            print('sektor F')
+            distance = self.distance_calculation(self.SECTOR_R2,(self.position_x, self.position_y, self.position_z))
+            speed = 150
+
+        elif self.position_x > 800 and self.position_y > 0:
+            distance = self.distance_calculation(self.SECTOR_R1,(self.position_x, self.position_y, self.position_z))
+            speed = 100
+
+        elif self.position_x < -800 and self.position_y < 0:
             distance = self.distance_calculation(self.SECTOR_R2,(self.position_x, self.position_y, self.position_z))
             speed = 100
 
-        elif self.position_x > 800 and self.position_y > 0:
-            print('sektor L1')
-            distance = self.distance_calculation(self.SECTOR_R1,(self.position_x, self.position_y, self.position_z))
-            speed = 80
-
-        elif self.position_x < -800 and self.position_y < 0:
-            print('sektor L2')
-            distance = self.distance_calculation(self.SECTOR_R2,(self.position_x, self.position_y, self.position_z))
-            speed = 80
-
         else:
-            pass
+            if self.collision_detector(300):
+                self.emergency_direction_change()
+                if self.collision_detector(10):
+                    self.status = 'Plane crashed'
 
-        try:
-            time = self.calc_time_at_const_speed(distance['distance'],speed)
-            self.vector_change_adjustment(distance['x'],distance['y'], distance['z'], time)
             result = self.dictionary_data_pack()
-        except UnboundLocalError:
-            result = self.dictionary_data_pack()
+            return result
 
+        time = self.calc_time_at_const_speed(distance['distance'],speed)
+        self.vector_change_adjustment(distance['x'],distance['y'], distance['z'], time)
+        
+        if self.collision_detector(300):
+            self.emergency_direction_change()
+            if self.collision_detector(10):
+                self.status = 'Plane crashed'
+        result = self.dictionary_data_pack()
         return result
 
 
     def dictionary_data_pack(self):
         result = {'msg':'change direction',
-                  'status':"IN_AIR",
+                  'status':self.status,
                   'velocity_vector':self.velocity}
         return result
     
@@ -117,3 +118,38 @@ class ControlTower:
         else:
             self.velocity[2] = z
         print(f'składowe wektora{self.velocity}')
+
+
+    def collision_detector(self, distance):
+        x_simul = self.position_x + self.velocity[0]
+        y_simul = self.position_y + self.velocity[1]
+        z_simul = self.position_z + self.velocity[2]
+
+        coordinates = self.conn.get_coordinates()
+        collision_detected = False
+
+        for coord in coordinates:
+            x, y, z, flight_num = coord
+            if abs(x_simul - x) < distance and abs(y_simul - y) < distance and abs(z_simul - z) < distance and flight_num != self.flight_number:
+                collision_detected = True
+                break
+
+        return collision_detected
+
+
+    def emergency_direction_change(self):
+        if self.velocity[0] > 0:
+            if self.velocity[1] > 0:
+                self.velocity[0] = -self.velocity[0]
+                self.velocity[2] = -self.velocity[2]
+            else: 
+                self.velocity[1] = -self.velocity[1]
+                self.velocity[2] = -self.velocity[2]
+        else:
+            if self.velocity[1] > 0:
+                self.velocity[1] = -self.velocity[1]
+                self.velocity[2] = -self.velocity[2]
+            else: 
+                self.velocity[0] = -self.velocity[0]
+                self.velocity[2] = -self.velocity[2]
+

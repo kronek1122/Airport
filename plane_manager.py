@@ -1,5 +1,4 @@
 '''Manage planes script'''
-from db_connection_pool import ConnectionPool
 from control_tower import ControlTower
 
 class PlaneManager:
@@ -33,10 +32,13 @@ class PlaneManager:
             else: 
                 result = {'msg':'to many planes in the air',
                           'status':'overloaded'}
+            if result['status'] == 'Plane crashed':
+                self.db.change_status(self.flight_number, 'Plane crashed')
+
         return result
 
 
     def control_tower_system(self):
-        control_tower = ControlTower(self.dictionary)
+        control_tower = ControlTower(self.dictionary, self.db)
         result = control_tower.guidance_system()
         return result
