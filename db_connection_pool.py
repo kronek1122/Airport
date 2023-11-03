@@ -64,11 +64,6 @@ class ConnectionPool:
                     connection.close()
                 except Exception as error:
                     print("Error:", error)
-            print(f"""
-                Ilość połączeń wykonanych: {self.connections_released}
-                Ilość aktualnie aktywnych połączeń: {self.active_connections}
-                Ilość dostępnych połączeń (w kolejce): {self.connections_queue.qsize()}
-                  """)
             time.sleep(1)
 
 
