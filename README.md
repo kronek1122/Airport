@@ -18,6 +18,6 @@ Requirements:
 - psycopg2
 - matplotlib
 - numpy
-- standards modules (threading, queue, os, time, multiprocessing)
+- standards modules (threading, queue, os, json, time, multiprocessing, random)
 
 
