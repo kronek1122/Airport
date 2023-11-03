@@ -21,8 +21,9 @@ class Server:
         self.server_socket = s.socket(s.AF_INET, s.SOCK_STREAM)
         self.server_socket.bind((self.host, self.port))
         self.server_socket.listen()
-        self.db = DatabaseManager(**self.postgres_config)
-        self.visualization = Visualization3D(self.db)
+        self.db_plane_manager = DatabaseManager(**self.postgres_config)
+        self.db_visualization = DatabaseManager(**self.postgres_config)
+        self.visualization = Visualization3D(self.db_visualization)
 
 
     def handle_client(self, connection, address):
@@ -33,7 +34,7 @@ class Server:
             if not query:
                 break
             received_data = json.loads(query)
-            plane_manager = PlaneManager(received_data, self.db)
+            plane_manager = PlaneManager(received_data, self.db_plane_manager)
             response_data = plane_manager.plane_signal()
             json_response_data = json.dumps(response_data)
             connection.sendall(json_response_data.encode('utf8'))
