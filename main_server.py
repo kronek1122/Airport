@@ -3,7 +3,7 @@ from multiprocessing import Process
 
 HOST = '127.0.0.1'
 PORT = 65432
-INFO = 'version: 0.0.7; creation date: 30.09.2023r'
+INFO = 'version: 0.1.0; creation date: 30.09.2023r'
 server = Server(HOST,PORT,INFO)
 
 server_process = Process(target=server.run)
