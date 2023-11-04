@@ -24,7 +24,7 @@ Requirements:
 How to start project:
 1. Create database, run db_creator.py (if database exist, first delete existing db - use db_delete.py file)
 2. Start the server, run the main_server.py file
-3. Start the client, run main_client.py file
+3. Start the client from another terminal, run main_client.py file
 
 
 
