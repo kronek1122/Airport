@@ -1,11 +1,13 @@
+import random
+
 
 class ControlTower:
-    SECTOR_A = (-2000, 1750, 1200)
-    SECTOR_B = (-2000, 1000, 1100)
-    SECTOR_C = (-1000, 1000, 400)
-    SECTOR_D = (2000, -1750, 1200)
-    SECTOR_E = (2000, -1000, 1100)
-    SECTOR_F = (1000, -1000, 400)
+    SECTOR_A = (-3000, 4000, 1500)
+    SECTOR_B = (-3500, 1000, 800)
+    SECTOR_C = (-1000, 1000, 200)
+    SECTOR_D = (3000, -4000, 1500)
+    SECTOR_E = (3500, -1000, 800)
+    SECTOR_F = (1000, -1000, 200)
     SECTOR_R1 = (1000, 1000, 0)
     SECTOR_R2 = (-1000, -1000, 0)
 
@@ -21,71 +23,75 @@ class ControlTower:
         self.velocity_y = self.velocity[1]
         self.velocity_z = self.velocity[2]
         self.conn = connection
+        self.msg = 'Change direction'
 
 
     def guidance_system(self):
-        if self.position_x >= -2500 and self.position_y >= 2000:
-            distance = self.distance_calculation(self.SECTOR_A,(self.position_x, self.position_y, self.position_z))
-            speed = 250
-
-        elif self.position_x <= 2500 and self.position_y <= -2000:
-            distance = self.distance_calculation(self.SECTOR_D,(self.position_x, self.position_y, self.position_z))
-            speed = 250
-
-        elif self.position_x < -2500 and self.position_y > -2000:
-            distance = self.distance_calculation(self.SECTOR_B,(self.position_x, self.position_y, self.position_z))
-            speed = 250
-
-        elif self.position_x > 2500 and self.position_y < 2000:
+        if self.position_x >= 2500 and self.position_y >= -500:
             distance = self.distance_calculation(self.SECTOR_E,(self.position_x, self.position_y, self.position_z))
-            speed = 250
+            speed = 200
 
-        elif self.position_x < -1500 and self.position_y > 0:
+        elif self.position_x <= -2500 and self.position_y <= 500:
+            distance = self.distance_calculation(self.SECTOR_B,(self.position_x, self.position_y, self.position_z))
+            speed = 200
+
+        elif self.position_x > -2500 and self.position_y > 1500:
+            distance = self.distance_calculation(self.SECTOR_A,(self.position_x, self.position_y, self.position_z))
+            speed = 180
+
+        elif self.position_x > 2500 and self.position_y < -1500:
+            distance = self.distance_calculation(self.SECTOR_E,(self.position_x, self.position_y, self.position_z))
+            speed = 180
+
+        elif self.position_x > -2500 and self.position_y < -1500:
+            distance = self.distance_calculation(self.SECTOR_D,(self.position_x, self.position_y, self.position_z))
+            speed = 180
+
+        elif self.position_x < -2500 and self.position_y > 1500:
+            distance = self.distance_calculation(self.SECTOR_B,(self.position_x, self.position_y, self.position_z))
+            speed = 180
+
+        elif self.position_x < -1500 and self.position_y > 500:
             distance = self.distance_calculation(self.SECTOR_C,(self.position_x, self.position_y, self.position_z))
-            speed = 200
+            speed = 150
 
-        elif self.position_x > 1500 and self.position_y < 0:
+        elif self.position_x > 1500 and self.position_y < -500:
             distance = self.distance_calculation(self.SECTOR_F,(self.position_x, self.position_y, self.position_z))
-            speed = 200
-
-        elif self.position_x < -1000 and self.position_y > 0:
-            distance = self.distance_calculation(self.SECTOR_R1,(self.position_x, self.position_y, self.position_z))
             speed = 150
 
-        elif self.position_x > 1000 and self.position_y < 0:
-            distance = self.distance_calculation(self.SECTOR_R2,(self.position_x, self.position_y, self.position_z))
-            speed = 150
-
-        elif self.position_x > 800 and self.position_y > 0:
+        elif self.position_x < -1000 and self.position_y > 850 and self.position_y < 1150 :
             distance = self.distance_calculation(self.SECTOR_R1,(self.position_x, self.position_y, self.position_z))
-            speed = 100
+            speed = 110
 
-        elif self.position_x < -800 and self.position_y < 0:
+        elif self.position_x > 1000 and self.position_y < -850 and self.position_y > 1150:
             distance = self.distance_calculation(self.SECTOR_R2,(self.position_x, self.position_y, self.position_z))
-            speed = 100
+            speed = 110
 
         else:
-            if self.collision_detector(300):
+            if self.collision_detector(200):
                 self.emergency_direction_change()
-                if self.collision_detector(10):
-                    self.status = 'Plane crashed'
+                if self.collision_detector(20):
+                    self.status = 'CRASHED'
+                    self.msg = 'plane crashed'
 
             result = self.dictionary_data_pack()
             return result
 
         time = self.calc_time_at_const_speed(distance['distance'],speed)
         self.vector_change_adjustment(distance['x'],distance['y'], distance['z'], time)
-        
-        if self.collision_detector(300):
+
+        if self.collision_detector(200):
             self.emergency_direction_change()
-            if self.collision_detector(10):
-                self.status = 'Plane crashed'
+            if self.collision_detector(20):
+                self.status = 'CRASHED'
+                self.msg = 'plane crashed'
+
         result = self.dictionary_data_pack()
         return result
 
 
     def dictionary_data_pack(self):
-        result = {'msg':'change direction',
+        result = {'msg':self.msg,
                   'status':self.status,
                   'velocity_vector':self.velocity}
         return result
@@ -113,7 +119,7 @@ class ControlTower:
         self.velocity[0] = round(x / time)
         self.velocity[1] = round(y / time)
 
-        if z < -16:
+        if z < -20 or z > 0:
             self.velocity[2] = round(z / time)
         else:
             self.velocity[2] = z
@@ -133,23 +139,18 @@ class ControlTower:
             if abs(x_simul - x) < distance and abs(y_simul - y) < distance and abs(z_simul - z) < distance and flight_num != self.flight_number:
                 collision_detected = True
                 break
-
+        
         return collision_detected
 
 
     def emergency_direction_change(self):
-        if self.velocity[0] > 0:
-            if self.velocity[1] > 0:
-                self.velocity[0] = -self.velocity[0]
-                self.velocity[2] = -self.velocity[2]
-            else: 
-                self.velocity[1] = -self.velocity[1]
-                self.velocity[2] = -self.velocity[2]
-        else:
-            if self.velocity[1] > 0:
-                self.velocity[1] = -self.velocity[1]
-                self.velocity[2] = -self.velocity[2]
-            else: 
-                self.velocity[0] = -self.velocity[0]
-                self.velocity[2] = -self.velocity[2]
+        point_H1 = (random.randint(-2500,2500),random.randint(2000,4000),random.randint(1000,2000))
+        point_H2 = (random.randint(-2500,2500),random.randint(-4000,-2000),random.randint(1000,2000))
 
+        if self.position_y > 0:
+            distance = self.distance_calculation(point_H1,(self.position_x, self.position_y, self.position_z))
+        else:
+            distance = self.distance_calculation(point_H2,(self.position_x, self.position_y, self.position_z))
+
+        time = self.calc_time_at_const_speed(distance['distance'],random.randint(80,200))
+        self.vector_change_adjustment(distance['x'],distance['y'], distance['z'], time)
