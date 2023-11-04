@@ -71,9 +71,10 @@ class PlaneSocket:
             received_dict = json.loads(received_data)
 
             print(f'''
-                dane samolotu: {flight_data}''')
+                dane samolotu: {flight_data}
+                otrzymane dane: {received_dict}''')
 
-            if received_dict['msg'] == 'to many planes in the air' or received_dict['msg'] == 'landed' or received_dict['status'] == 'Plane crashed':
+            if received_dict['msg'] == 'to many planes in the air' or received_dict['msg'] == 'landed' or received_dict['msg'] == 'Plane crashed':
                 break
             else:
                 self.vector_update(received_dict)

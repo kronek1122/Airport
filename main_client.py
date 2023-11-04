@@ -21,4 +21,4 @@ while True:
     thread = threading.Thread(target=create_client, args=(flight_num,))
     thread.start()
     active_threads +=1
-    time.sleep(random.randint(5,30)*0.1)
+    time.sleep(random.randint(10,50)*0.1)
