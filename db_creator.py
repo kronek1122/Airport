@@ -4,14 +4,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-database = os.getenv('database')
-user = os.getenv('user')
-password = os.getenv('password')
-host = os.getenv('host')
-port = os.getenv('port')
+postgres_config_str = os.getenv('POSTGRES_CONFIG')
+postgres_config = eval(postgres_config_str)
+
+postgres_config_db_str = os.getenv('POSTGRES_CONFIG_DB')
+postgres_config_db = eval(postgres_config_db_str)
 
 # Create Basic Database
-conn = psycopg2.connect(user=user, password=password, host = host, port = port)
+conn = psycopg2.connect(**postgres_config)
 conn.autocommit = True
 c = conn.cursor()
 
@@ -23,7 +23,7 @@ except errors.DuplicateDatabase:
 conn.close()
 
 #Connect to database
-conn = psycopg2.connect(database = database, user=user, password=password, host = host)
+conn = psycopg2.connect(**postgres_config_db)
 c = conn.cursor()
 
 #Create Main Table
