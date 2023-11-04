@@ -20,7 +20,12 @@ class PlaneManager:
         if self.position_z == 0:
             self.db.change_status(self.flight_number, 'LANDED')
             result = {'msg':'landed',
-                      'status':'overloaded'}
+                      'status':'LANDED'}
+
+        elif self.position_z < 0:
+            result = {'msg':'Plane crashed',
+                      'status':'CRASHED'}
+
         else:
             if self.db.num_of_planes_over_the_airport() < 100 or self.db.plane_status(self.flight_number)=='IN_AIR':
                 msg = self.db.add_plane(self.flight_number, self.status, self.position_x, self.position_y, self.position_z, self.velocity_x, self.velocity_y, self.velocity_z)
@@ -29,11 +34,13 @@ class PlaneManager:
                     result = self.control_tower_system()
                 else:
                     result = self.control_tower_system()
+
             else: 
                 result = {'msg':'to many planes in the air',
                           'status':'overloaded'}
-            if result['status'] == 'Plane crashed':
-                self.db.change_status(self.flight_number, 'Plane crashed')
+
+        if result['msg'] == 'Plane crashed':
+            self.db.change_status(self.flight_number, 'CRASHED')
 
         return result
 
