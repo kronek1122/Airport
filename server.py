@@ -41,7 +41,6 @@ class Server:
 
     def run(self):
         while True:
-            print(f"ilość wątków serwera: {self.active_threads}")
             connection, address = self.server_socket.accept()
             thread = threading.Thread(target=self.handle_client, args=(connection, address))
             thread.start()
