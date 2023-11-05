@@ -2,14 +2,20 @@ import random
 
 
 class ControlTower:
-    SECTOR_A = (-3000, 4000, 1500)
-    SECTOR_B = (-3500, 1000, 800)
-    SECTOR_C = (-1000, 1000, 200)
-    SECTOR_D = (3000, -4000, 1500)
-    SECTOR_E = (3500, -1000, 800)
-    SECTOR_F = (1000, -1000, 200)
-    SECTOR_R1 = (1000, 1000, 0)
-    SECTOR_R2 = (-1000, -1000, 0)
+    SECTOR_A = (4000, -4000, 1500)
+    SECTOR_B = (-3000, -4000, 1500)
+    SECTOR_C = (-4000, 4000, 1200)
+    SECTOR_D = (3000, 4000, 1200)
+    SECTOR_E = (-3000, -2250, 1000)
+    SECTOR_F = (3000, 2250, 1000)
+    SECTOR_G = (3000, -2500, 750)
+    SECTOR_H = (-3000, 2500, 750)
+    SECTOR_I = (3000, -1000, 500)
+    SECTOR_J = (-3000, 1000, 500)
+    SECTOR_K = (1000, -1000, 200)
+    SECTOR_L = (-1000, 1000, 200)
+    SECTOR_R1 = (-1000, -1000, 0)
+    SECTOR_R2 = (1000, 1000, 0)
 
 
     def __init__(self, dictionary:dict, connection):
@@ -27,43 +33,59 @@ class ControlTower:
 
 
     def guidance_system(self):
-        if self.position_x >= 2500 and self.position_y >= -500:
-            distance = self.distance_calculation(self.SECTOR_E,(self.position_x, self.position_y, self.position_z))
-            speed = 200
-
-        elif self.position_x <= -2500 and self.position_y <= 500:
-            distance = self.distance_calculation(self.SECTOR_B,(self.position_x, self.position_y, self.position_z))
-            speed = 200
-
-        elif self.position_x > -2500 and self.position_y > 1500:
+        if self.position_x >= 3500 and self.position_y >= -3000:
             distance = self.distance_calculation(self.SECTOR_A,(self.position_x, self.position_y, self.position_z))
             speed = 180
 
-        elif self.position_x > 2500 and self.position_y < -1500:
-            distance = self.distance_calculation(self.SECTOR_E,(self.position_x, self.position_y, self.position_z))
-            speed = 180
-
-        elif self.position_x > -2500 and self.position_y < -1500:
-            distance = self.distance_calculation(self.SECTOR_D,(self.position_x, self.position_y, self.position_z))
-            speed = 180
-
-        elif self.position_x < -2500 and self.position_y > 1500:
+        elif self.position_y < -3000 and self.position_x > -2500:
             distance = self.distance_calculation(self.SECTOR_B,(self.position_x, self.position_y, self.position_z))
             speed = 180
 
-        elif self.position_x < -1500 and self.position_y > 500:
+        elif self.position_x < -3500 and self.position_y < 3000:
             distance = self.distance_calculation(self.SECTOR_C,(self.position_x, self.position_y, self.position_z))
-            speed = 150
+            speed = 180
 
-        elif self.position_x > 1500 and self.position_y < -500:
+        elif self.position_y > 3000 and self.position_x < 2500:
+            distance = self.distance_calculation(self.SECTOR_D,(self.position_x, self.position_y, self.position_z))
+            speed = 180
+
+        elif self.position_x < -2500 and self.position_y < -3000:
+            distance = self.distance_calculation(self.SECTOR_E,(self.position_x, self.position_y, self.position_z))
+            speed = 180
+
+        elif self.position_x > 2500 and self.position_y > 3000:
             distance = self.distance_calculation(self.SECTOR_F,(self.position_x, self.position_y, self.position_z))
+            speed = 180
+
+        elif self.position_x < 2500 and self.position_y < -2000:
+            distance = self.distance_calculation(self.SECTOR_G,(self.position_x, self.position_y, self.position_z))
             speed = 150
 
-        elif self.position_x < -1000 and self.position_y > 850 and self.position_y < 1150 :
+        elif self.position_x > -2500 and self.position_y > 2000:
+            distance = self.distance_calculation(self.SECTOR_H,(self.position_x, self.position_y, self.position_z))
+            speed = 150
+
+        elif self.position_x > 2500 and self.position_y < -1500:
+            distance = self.distance_calculation(self.SECTOR_I,(self.position_x, self.position_y, self.position_z))
+            speed = 150
+
+        elif self.position_x < -2500 and self.position_y > 1500:
+            distance = self.distance_calculation(self.SECTOR_J,(self.position_x, self.position_y, self.position_z))
+            speed = 150
+
+        elif self.position_x > 1500 and self.position_y < -500 and self.position_y > -1500:
+            distance = self.distance_calculation(self.SECTOR_K,(self.position_x, self.position_y, self.position_z))
+            speed = 120
+
+        elif self.position_x < -1500 and self.position_y > 500 and self.position_y < 1500:
+            distance = self.distance_calculation(self.SECTOR_L,(self.position_x, self.position_y, self.position_z))
+            speed = 120
+
+        elif self.position_x > 1000 and self.position_y < -850 and self.position_y > 1150:
             distance = self.distance_calculation(self.SECTOR_R1,(self.position_x, self.position_y, self.position_z))
             speed = 110
 
-        elif self.position_x > 1000 and self.position_y < -850 and self.position_y > 1150:
+        elif self.position_x < -1000 and self.position_y > 850 and self.position_y < 1150 :
             distance = self.distance_calculation(self.SECTOR_R2,(self.position_x, self.position_y, self.position_z))
             speed = 110
 
@@ -119,7 +141,7 @@ class ControlTower:
         self.velocity[0] = round(x / time)
         self.velocity[1] = round(y / time)
 
-        if z < -20 or z > 0:
+        if z < -15 or z > 0:
             self.velocity[2] = round(z / time)
         else:
             self.velocity[2] = z
