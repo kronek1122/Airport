@@ -26,5 +26,6 @@ How to start project:
 2. Start the server, run the main_server.py file
 3. Start the client from another terminal, run main_client.py file
 
+Link to a video of the application in action: https://www.youtube.com/watch?v=rqT0HtlhNb4&feature=youtu.be
 
 
