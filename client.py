@@ -60,7 +60,7 @@ class PlaneSocket:
             flight_data = self.data_dictionary()
             self.fuel_gauge_check()
             if flight_data['IS_FUEL'] is False:
-                self.status = 'Plane crashed'
+                self.status = 'CRASHED'
                 flight_data_json = self.json_data_converter()
                 self.client_socket.sendall(flight_data_json.encode('utf8'))
                 break
@@ -74,7 +74,7 @@ class PlaneSocket:
                 dane samolotu: {flight_data}
                 otrzymane dane: {received_dict}''')
 
-            if received_dict['msg'] == 'to many planes in the air' or received_dict['msg'] == 'landed' or received_dict['msg'] == 'Plane crashed':
+            if received_dict['msg'] == 'to many planes in the air' or received_dict['msg'] == 'landed' or received_dict['msg'] == 'plane crashed':
                 break
             else:
                 self.vector_update(received_dict)
