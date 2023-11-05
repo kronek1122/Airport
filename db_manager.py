@@ -72,16 +72,6 @@ class DatabaseManager:
         finally:
             self.connection_pool.release_connection(conn)
         return msg
-        
-
-    def num_of_planes_over_the_airport(self):
-        query = "SELECT COUNT(*) FROM flights_log WHERE status = 'IN_AIR';"
-        conn = self.connection_pool.get_connection()
-        curr = conn.cursor()
-        curr.execute(query)
-        result = curr.fetchone()[0]
-        self.connection_pool.release_connection(conn)
-        return result
     
 
     def plane_status(self,flight_number:int):
@@ -111,4 +101,13 @@ class DatabaseManager:
         finally:
             self.connection_pool.release_connection(conn)
         return coordinates
+    
 
+    def get_num_of_planes_by_status(self, status):
+        query = "SELECT COUNT(*) FROM flights_log WHERE status = %s;"
+        conn = self.connection_pool.get_connection()
+        curr = conn.cursor()
+        curr.execute(query, (status,))
+        result = curr.fetchone()[0]
+        self.connection_pool.release_connection(conn)
+        return result
