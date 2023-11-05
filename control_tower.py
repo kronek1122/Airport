@@ -81,18 +81,18 @@ class ControlTower:
             distance = self.distance_calculation(self.SECTOR_L,(self.position_x, self.position_y, self.position_z))
             speed = 120
 
-        elif self.position_x > 1000 and self.position_y < -850 and self.position_y > 1150:
+        elif self.position_x > -1000 and self.position_y < -750 and self.position_y > -1250:
             distance = self.distance_calculation(self.SECTOR_R1,(self.position_x, self.position_y, self.position_z))
             speed = 110
 
-        elif self.position_x < -1000 and self.position_y > 850 and self.position_y < 1150 :
+        elif self.position_x < 1000 and self.position_y > 750 and self.position_y < 1250 :
             distance = self.distance_calculation(self.SECTOR_R2,(self.position_x, self.position_y, self.position_z))
             speed = 110
 
         else:
             if self.collision_detector(200):
                 self.emergency_direction_change()
-                if self.collision_detector(20):
+                if self.collision_detector(50):
                     self.status = 'CRASHED'
                     self.msg = 'plane crashed'
 
@@ -104,7 +104,7 @@ class ControlTower:
 
         if self.collision_detector(200):
             self.emergency_direction_change()
-            if self.collision_detector(20):
+            if self.collision_detector(50):
                 self.status = 'CRASHED'
                 self.msg = 'plane crashed'
 
@@ -141,11 +141,10 @@ class ControlTower:
         self.velocity[0] = round(x / time)
         self.velocity[1] = round(y / time)
 
-        if z < -15 or z > 0:
-            self.velocity[2] = round(z / time)
+        if self.position_z < 17:
+            self.velocity[2] = -self.position_z
         else:
-            self.velocity[2] = z
-        print(f'składowe wektora{self.velocity}')
+            self.velocity[2] = round(z / time)
 
 
     def collision_detector(self, distance):
