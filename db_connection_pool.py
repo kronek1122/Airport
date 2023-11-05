@@ -10,8 +10,8 @@ class ConnectionPool:
         self.user = user
         self.password = password
         self.host = host
-        self.min_connections = 3
-        self.max_connections = 100
+        self.min_connections = 2
+        self.max_connections = 50
         self.connections_queue = Queue(maxsize=self.max_connections)
         self.semaphore = threading.Semaphore()
         self.connections_released = 0
