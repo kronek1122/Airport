@@ -23,11 +23,11 @@ class PlaneManager:
                       'status':'LANDED'}
 
         elif self.position_z < 0:
-            result = {'msg':'Plane crashed',
+            result = {'msg':'plane crashed',
                       'status':'CRASHED'}
 
         else:
-            if self.db.num_of_planes_over_the_airport() < 100 or self.db.plane_status(self.flight_number)=='IN_AIR':
+            if self.db.get_num_of_planes_by_status('IN_AIR') < 100 or self.db.plane_status(self.flight_number)=='IN_AIR':
                 msg = self.db.add_plane(self.flight_number, self.status, self.position_x, self.position_y, self.position_z, self.velocity_x, self.velocity_y, self.velocity_z)
                 if msg['msg'] == 'Error adding new plane to db':
                     self.db.change_plane_information(self.flight_number, self.status, self.position_x, self.position_y, self.position_z, self.velocity_x, self.velocity_y, self.velocity_z)
@@ -37,10 +37,12 @@ class PlaneManager:
 
             else: 
                 result = {'msg':'to many planes in the air',
-                          'status':'overloaded'}
+                          'status':'REDIRECTED'}
+                self.status = result['status']
+                msg = self.db.add_plane(self.flight_number, self.status, self.position_x, self.position_y, self.position_z, self.velocity_x, self.velocity_y, self.velocity_z)
 
-        if result['msg'] == 'Plane crashed':
-            self.db.change_status(self.flight_number, 'CRASHED')
+        if result['msg'] == 'plane crashed':
+            self.db.change_status(self.flight_number, result['status'])
 
         return result
 
