@@ -146,11 +146,20 @@ class ControlTower:
     def emergency_direction_change(self):
         point_H1 = (random.randint(-2500,2500),random.randint(2000,4000),random.randint(1000,2000))
         point_H2 = (random.randint(-2500,2500),random.randint(-4000,-2000),random.randint(1000,2000))
+        point_H3 = (random.randint(-2500,0),random.randint(2000,3500),random.randint(1000,2000))
+        point_H4 = (random.randint(0,2500),random.randint(-3500,-2000),random.randint(1000,2000))
 
-        if self.position_y > 0:
+        if self.position_y > 0 and self.position_x > -2500:
             distance = self.distance_calculation(point_H1,(self.position_x, self.position_y, self.position_z))
-        else:
+        
+        elif self.position_y < 0 and self.position_x < 2500:
             distance = self.distance_calculation(point_H2,(self.position_x, self.position_y, self.position_z))
+        
+        elif self.position_y > 0 and self.position_x < -2500:
+            distance = self.distance_calculation(point_H3,(self.position_x, self.position_y, self.position_z))
+        
+        elif self.position_y < 0 and self.position_x > 2500:
+            distance = self.distance_calculation(point_H4,(self.position_x, self.position_y, self.position_z))
 
         time = self.calc_time_at_const_speed(distance['distance'],random.randint(80,200))
         self.vector_change_adjustment(distance['x'],distance['y'], distance['z'], time)
