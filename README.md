@@ -1,31 +1,38 @@
-# Airport
+# Airport Simulator with Air Traffic Control System
 
-Client-Server API, use sockets. The airport simulator.
+Airport is a client-server API using sockets to simulate an air traffic control tower guiding planes for landing. The project includes an airport with specific parameters and requirements for realistic simulation.
 
-The air traffic control tower (server) automatically brings planes (clients) to land. 
+## Airport Parameters:
 
-A maximum of 100 planes can be in the air (db_connection_pool takes care of that)
+- Cuboid with a square base (side: 10 km, height: 5 km)
+- Two airstrips
+- Average speed of the plane in the air: 200 m/s
+- Landing speed minimum: 110 m/s
+- Airstrip length: 3 - 3.5 km
+- Airstrip width: 50 m
 
-Airport parameters:
-- a cuboid with a square base, side 10 km and height 5 km
-- two airstrips
-- average speed of the plane in the air: 200 m/s
-- landing speed min: 110 m/s
-- airstrip length 3 - 3.5 km
-- airstrip width 50m
+## Requirements:
 
-Requirements: 
 - dotenv
 - psycopg2
 - matplotlib
 - numpy
-- standards modules (threading, queue, os, json, time, multiprocessing, random)
+- Standard modules (threading, queue, os, json, time, multiprocessing, random)
 
-How to start project:
-1. Create database, run db_creator.py (if database exist, first delete existing db - use db_delete.py file)
-2. Start the server, run the main_server.py file
-3. Start the client from another terminal, run main_client.py file
+## How to Start the Project:
 
-Link to a video of the application in action: https://www.youtube.com/watch?v=rqT0HtlhNb4&feature=youtu.be
+1. **Create Database:**
+   - Run `db_creator.py` to create the database. If the database already exists, delete it using `db_delete.py` before creating a new one.
 
+2. **Start the Server:**
+   - Run `main_server.py` to start the server.
+
+3. **Start the Client:**
+   - Open another terminal and run `main_client.py` to start the client.
+
+## Video Demonstration:
+
+[Watch the application in action on YouTube](https://www.youtube.com/watch?v=rqT0HtlhNb4&feature=youtu.be).
+
+Feel free to contribute or provide feedback!
 
